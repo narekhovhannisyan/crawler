@@ -1,11 +1,11 @@
+const env = process.env.NODE_ENV || 'development'
+const config = require(__dirname + '/../config/config.json')[env]
 const rp = require('request-promise')
 const models = require('../db')
-var env = process.env.NODE_ENV || 'development'
-var config = require(__dirname + '/../config/config.json')[env]
 
 
 const makeFbRequest = (uri) => {
-    uri += '&access_token=' + appId + '|' + appSecret 
+    uri += '&access_token=' + config.FACEBOOK_APP_ID + '|' + config.FACEBOOK_APP_SECRET
     var options = {
         uri: uri,
         headers: {
