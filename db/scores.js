@@ -26,10 +26,11 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    total: {
+    growth_rate: {
       type: DataTypes.INTEGER,
       allowNull: true
     },
+
   }, {
     tableName: 'scores',
     timestamps: true,

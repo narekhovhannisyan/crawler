@@ -1,3 +1,3 @@
-const FbPages = require('./social/FbPages.js')
+const Crawl = require('./lib/crawl')
 
-FbPages.getPageMetadata()
+Crawl.crawlFbPages()
