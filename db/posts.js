@@ -17,6 +17,14 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: true
     },
+    last_growth_rate: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    last_growth_rate_date: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
     post_created_time: {
       type: DataTypes.DATE,
       allowNull: true
