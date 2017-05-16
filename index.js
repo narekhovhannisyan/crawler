@@ -1,3 +1,3 @@
 const Crawl = require('./lib/crawl')
 
-Crawl.crawlFbPages()
+Crawl.runCrawlEvery20Minutes()
