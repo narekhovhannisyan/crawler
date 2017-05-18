@@ -21,6 +21,10 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: true
     },
+    crawl_count: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
     last_growth_rate_date: {
       type: DataTypes.DATE,
       allowNull: true

@@ -32,7 +32,6 @@ const getPagePosts = (pageId, limit, fields) => {
 
 
 module.exports = {
-    makeFbRequest,
     getPostDetails,
     getPagePosts
 }
