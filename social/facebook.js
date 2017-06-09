@@ -6,7 +6,7 @@ const models = require('../db')
 
 const makeFbRequest = (uri) => {
 	uri += '&access_token=' + config.FACEBOOK_APP_ID + '|' + config.FACEBOOK_APP_SECRET
-	var options = {
+	let options = {
 		uri: uri,
 		headers: {
 				'User-Agent': 'Request-Promise'
@@ -17,14 +17,14 @@ const makeFbRequest = (uri) => {
 }
 
 const getPostDetails = (postId, fields) => {
-	var fieldeghen = fields ? '?fields=' + fields.join(',') : ''
-	var url = 'https://graph.facebook.com/v2.9/' + postId + fieldeghen
+	let fieldeghen = fields ? '?fields=' + fields.join(',') : ''
+	let url = 'https://graph.facebook.com/v2.9/' + postId + fieldeghen
 	return makeFbRequest(url)
 }
 
 const getPagePosts = (pageId, limit, fields) => {
-	var urlazavr = '?fields=posts.limit=(' + limit + ')' + '{' + fields.join(',') + '}'
-	var url = 'https://graph.facebook.com/v2.9/' + pageId + urlazavr
+	let urlazavr = '?fields=posts.limit=(' + limit + ')' + '{' + fields.join(',') + '}'
+	let url = 'https://graph.facebook.com/v2.9/' + pageId + urlazavr
 	return makeFbRequest(url).then(res => {
 		return res.posts.data.map(post => Object.assign({}, post, {pageId}))
 	})
