@@ -8,10 +8,14 @@ const moment = require('moment')
 let pool = require('./promisepool')
 
 /* using Promise Pool */
-let promisePool = new pool.PromisePool({concurency: 150, interval: 1000 * 60})
+let promisePool = new pool.PromisePool({concurency: 150, interval: 1000 * 60}) // interval by milliseconds
 
 const startPagesCrawlWithPool = () => {
-	promisePool.convertToFunction(startPagesCrawl).addToQueue()
+	return promisePool.convertToFunction(startPagesCrawl).addToQueue()
+}
+
+const startPostsCrawlWithPool = () => {
+	return promisePool.convertToFunction(startPostsCrawl).addToQueue()
 }
 /* ------------------ */
 
@@ -60,7 +64,7 @@ const processPosts = (posts) => {
 	.thenReturn(posts)
 	//.then(grabAndSavePostScore)
 	.tap(console.log('finished processing!'))
-	.catch(err => console.log(err, err.stack))
+	.catch(err => console.log(err))
 }
 
 const incrPostCrawlCount = (post) => {
@@ -171,7 +175,7 @@ const savePostIntoDbIfNew = (post) => {
 			active: true,
 			post_message: post.message || post.story || 'Message or Story does not exists!',
 			post_created_time: post.created_time,
-			link: post.link || 'https://www.facebook.com/' + post_id,
+			link: post.link || 'https://www.facebook.com/' + post.id,
 			crawl_count: 0
 		},
 		where: {
@@ -185,5 +189,6 @@ const savePostIntoDbIfNew = (post) => {
 module.exports = {
 	startPagesCrawl,
 	startPagesCrawlWithPool,
-	startPostsCrawl
+	startPostsCrawl,
+	startPostsCrawlWithPool
 }
