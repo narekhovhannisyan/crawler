@@ -1,14 +1,7 @@
 const Promise = require('bluebird')
-// let fns = []
-
-// for (let i = 0; i < 10; i++) {
-//   const f = () => Promise.resolve(i).thenReturn(true).catch(err => false)
-//   fns.push(f)
-// }
 
 /* interval in milliseconds */
-class PromisePool { 
- 
+class PromisePool {
   constructor(concurrency, interval) {
     this.running = 0
     this.success = 0
@@ -22,7 +15,7 @@ class PromisePool {
 
   process() {
     if (this.running > this.concurrency) return
-    if (this.waitingQueue.length == 0) return 
+    if (this.waitingQueue.length == 0) return
     let f = this.waitingQueue.shift()
     let currentInterval = this.dateByInterval()
     this.addRunning(currentInterval)
@@ -55,7 +48,9 @@ class PromisePool {
 
   removeRunning(_interval) {
     this.counterPerInterval[_interval]--
-    if (this.counterPerInterval[_interval] < this.dateByInterval() && this.counterPerInterval[_interval] == 0) {
+    if (
+      this.counterPerInterval[_interval] < this.dateByInterval() && this.counterPerInterval[_interval] == 0
+    ) {
       this.counterPerInterval.shift()
     }
   }
@@ -69,27 +64,16 @@ class PromisePool {
   }
 
   addToQueue() {
-    this.fns.forEach((item) => this.waitingQueue.push(item))
+    this.fns.forEach(item => this.waitingQueue.push(item))
     this.process()
-    return this
-    // if (typeof this.fns[] === 'function') {
-    //   return this.waitingQueue.push(this.fns)
-    // } else 
-    // if (Object.prototype.toString.call(this.fns[]) === '[object Array]') {
-    //   return this.fns.map(this.addToQueue)
-    // } else {
-    //   throw 'Please give me normal argument :('
-    // }
-    // this.process()
+    return Promise.resolve()
   }
 
-  convertToFunction (_promise) {
-      this.fns.push(() => _promise().thenReturn(true).catch(err => console.log(err, err.stack)))
-      return this
+  convertToFunction(_promise) {
+    this.fns.push(() => _promise().thenReturn(true).catch(err => console.log(err, err.stack)))
+    return this
   }
 }
-
-
 
 module.exports = {
   PromisePool

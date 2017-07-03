@@ -5,52 +5,80 @@ const Promise = require('bluebird')
 const source = './flow'
 
 const recursiveScan = (source, processor) => {
-  const process = (dir) => {
+  const process = dir => {
     if (fs.statSync(path.join(source, dir)).isDirectory()) {
-      console.log(path.join(source, dir), '\n')
-      processor(path.join(source, dir), dir)
-      return recursiveScan(path.join(source, dir), processor)
+      return processor(path.join(source, dir), dir).then(() => {
+        return recursiveScan(path.join(source, dir), processor)
+      })
     } else if (fs.statSync(path.join(source, dir)).isFile()) {
-      console.log(path.join(source, dir))
       return processor(path.join(source, dir), dir)
     } else {
       return Promise.reject(Error('something wrong with the directory'))
     }
   }
   const dirs = fs.readdirSync(source)
-  console.log(dirs)
-  return Promise.mapSeries(dirs, dir => process(dir))
+  return Promise.map(dirs, process)
 }
 
 const removeFlowTypes = (source, target) => {
-  const input = fs.readFileSync(source, 'utf8')
-  const output = flowRemoveTypes(input)
-  fs.writeFileSync(target, output.toString())
-}
-
-const copyFile = (source, target) => {
-  const input = fs.readFileSync(source, 'utf8')
-  fs.writeFileSync(target, input.toString())
-}
-
-const unflow = (source, dir) => {
-  console.log('unflow called!')
-  const target = source.replace('flow','dist')
-  const ext = '.js'
-  if (fs.statSync(source).isDirectory()) {
-    /* cheking if source firectory exists in destination directory otherwise do nothing */
-    if (!fs.existsSync(target)) {
-      return Promise.resolve(fs.mkdirSync(target))
-    } 
-  } else if (fs.statSync(source).isFile() && path.extname(source) == ext) {
-    return Promise.resolve(removeFlowTypes(source, target))
-  } else {
-    return Promise.resolve(copyFile(source, target))
+  /* if source is modified, then change file, otherwise do nothing! */
+  if (checkLastModifiedDate(target) < checkLastModifiedDate(source)) {
+    const input = fs.readFileSync(source, 'utf8')
+    const output = flowRemoveTypes(input)
+    fs.writeFileSync(target, output.toString())
   }
 }
 
-const unflowAsync = (source, dir) => {
-  return Promise.resolve(unflow(source, dir))
+const copyFile = (source, target) => {
+  /* if source is modified, then copy file, otherwise do nothing! */
+  return new Promise(resolve => {
+    if (checkLastModifiedDate(target) < checkLastModifiedDate(source)) {
+      const readable = fs.createReadStream(source)
+      readable.pipe(fs.createWriteStream(target))
+      readable.on('end', () => {
+        resolve()
+      })
+    } else {
+      resolve()
+    }
+  })
 }
 
-recursiveScan(source, unflowAsync)
+const createDirectory = target => {
+  return fs.mkdirSync(target)
+}
+
+const dirExists = path => {
+  return fs.existsSync(path)
+}
+
+const checkLastModifiedDate = source => {
+  return dirExists(source) ? new Date(fs.statSync(source).mtime) : 0
+}
+
+const unflow = (source, dir) => {
+  const target = source.replace('flow', 'dist')
+  const ext = '.js'
+  return Promise.resolve().then(() => {
+    if (!fs.existsSync(target)) {
+      createDirectory(target)
+    }
+    if (fs.statSync(source).isDirectory()) {
+      /* cheking if source firectory exists in destination directory otherwise do nothing */
+      if (!fs.existsSync(target)) {
+        return createDirectory(target)
+      }
+    } else if (fs.statSync(source).isFile() && path.extname(source) == ext) {
+      return removeFlowTypes(source, target)
+    } else {
+      return copyFile(source, target)
+    }
+  })
+}
+
+const unflowAsync = (source, dir) => {
+  return Promise.resolve().then(() => unflow(source, dir))
+}
+
+console.time('takes')
+recursiveScan(source, unflowAsync).then(() => console.timeEnd('takes'))

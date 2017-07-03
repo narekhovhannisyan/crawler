@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "bluebird": "^3.5.0",
     "flow-remove-types": "^1.2.1",
     "pg": "^6.1.5",
     "pg-hstore": "^2.3.2",
@@ -8,7 +9,7 @@
     "sequelize": "^3.30.4"
   },
   "scripts": {
-    "run": "node ./remove-types.js && node ./dist/index.js"
+    "run": "node ./dist/index.js"
   },
   "devDependencies": {
     "flow-bin": "^0.48.0"
