@@ -2,15 +2,18 @@ const fs = require('fs')
 const flowRemoveTypes = require('flow-remove-types')
 const path = require('path')
 const Promise = require('bluebird')
-const source = './flow'
+
+const source = './src'
 
 const recursiveScan = (source, processor) => {
   const process = dir => {
     if (fs.statSync(path.join(source, dir)).isDirectory()) {
+      console.log('dir', path.join(source, dir))
       return processor(path.join(source, dir), dir).then(() => {
         return recursiveScan(path.join(source, dir), processor)
       })
     } else if (fs.statSync(path.join(source, dir)).isFile()) {
+      console.log('file', path.join(source, dir))
       return processor(path.join(source, dir), dir)
     } else {
       return Promise.reject(Error('something wrong with the directory'))
@@ -57,12 +60,12 @@ const checkLastModifiedDate = source => {
 }
 
 const unflow = (source, dir) => {
-  const target = source.replace('flow', 'dist')
+  const target = source.replace('src', 'dist')
   const ext = '.js'
   return Promise.resolve().then(() => {
-    if (!fs.existsSync(target)) {
-      createDirectory(target)
-    }
+    // if (!fs.existsSync(target)) {
+    //   createDirectory(target)
+    // }
     if (fs.statSync(source).isDirectory()) {
       /* cheking if source firectory exists in destination directory otherwise do nothing */
       if (!fs.existsSync(target)) {
@@ -77,7 +80,7 @@ const unflow = (source, dir) => {
 }
 
 const unflowAsync = (source, dir) => {
-  return Promise.resolve().then(() => unflow(source, dir))
+  return unflow(source, dir)
 }
 
 console.time('takes')

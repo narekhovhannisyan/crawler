@@ -2,6 +2,7 @@
   "dependencies": {
     "bluebird": "^3.5.0",
     "flow-remove-types": "^1.2.1",
+    "flow-remover": "^1.0.3",
     "pg": "^6.1.5",
     "pg-hstore": "^2.3.2",
     "request": "^2.81.0",
