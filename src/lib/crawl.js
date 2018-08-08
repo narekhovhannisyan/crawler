@@ -1,23 +1,27 @@
-
-const models = require('../db')
-const Promise = require('bluebird')
 const FbPages = require('../lib/fbpages')
-const hf = require('../lib/helperfunctions.js')
+const helpers = require('./helpers.js')
 
-
+/**
+ * @description Starts crawling fb pages.
+ */
 const runPagesCrawl = () => {
-  console.log('starting crawl pages every 20 minutes')  
-  return hf.callRecursivePromise(() => { return FbPages.startPagesCrawlWithPool()}, 1000 * 60) //every minute
+  console.log('Start crawling fb pages.')
+  return helpers.callRecursivePromise(() => {
+    return FbPages.startPagesCrawl()
+  }, 1000 * 60) //every minute
 }
 
+/**
+ * @description Starts crawling fb posts.
+ */
 const runPostsCrawl = () => {
-  console.log('starting crawl posts every 20 minutes')
-  return hf.callRecursivePromise(() => { return FbPages.startPostsCrawlWithPool()}, 1000 * 60) //every minute
+  console.log('Start crawling fb posts.')
+  return helpers.callRecursivePromise(() => {
+    return FbPages.startPostsCrawl()
+  }, 1000 * 60) //every minute
 }
 
-
-module.exports = { 
+module.exports = {
   runPagesCrawl,
   runPostsCrawl
 }
- 
